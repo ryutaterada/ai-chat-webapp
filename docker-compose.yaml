@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  chatapi:
+    build:
+      context: "./chatapi"
+      dockerfile: "Dockerfile"
+    ports:
+      - 8000:8000
+    networks:
+      - chat_network
+    depends_on:
+      - flask
+
+  flask:
+    build:
+      context: "./flask"
+      dockerfile: "Dockerfile"
+    ports:
+      - 3000:3000
+    networks:
+      - chat_network
+
+networks:
+  chat_network:
