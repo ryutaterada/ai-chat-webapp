@@ -33,3 +33,9 @@ clean:
 
 # コンテナを再実行する
 rerun: down clean up
+
+# gitのコミットメッセージを生成する
+commit:
+	git add .
+	git commit -m "update"
+	git push origin main
