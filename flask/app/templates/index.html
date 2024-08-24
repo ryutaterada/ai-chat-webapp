@@ -11,29 +11,42 @@
 <body>
     <script>
         document.addEventListener("DOMContentLoaded", (event) => {
+            // サーバーに接続する
             var socket = io.connect(
                 "http://" + document.domain + ":" + location.port
             );
 
+            // AIからのメッセージを表示する
             socket.on("receive_message", function (data) {
                 console.log("Receive Message:", data);
                 let messageBox = document.getElementById("messages");
-                let formattedMessage = data.message.replace(/\n/g, "<br>");
-                messageBox.innerHTML += "<p><b>Bot:</b> " + formattedMessage + "</p>";
+                if (typeof data.message === 'string') {
+                    // メッセージ内の改行をHTMLの改行タグに置き換える
+                    let formattedMessage = data.message.replace(/\n/g, "<br>");
+                    // メッセージを表示エリアに追加する
+                    messageBox.innerHTML += "<p><b>Bot:</b> " + formattedMessage + "</p>";
+                } else {
+                    console.error("Received message is not a string:", data.message);
+                }
             });
 
+            // ユーザーのメッセージを表示する
             socket.on("insert_message", function (data) {
                 console.log("Insert Message:", data);
                 let messageBox = document.getElementById("messages");
+                // ユーザーのメッセージを表示エリアに追加する
                 messageBox.innerHTML += "<p><b>You:</b> " + data.message + "</p>";
             });
 
+            // 送信ボタンがクリックされたときの処理
             document
                 .getElementById("send-button")
                 .addEventListener("click", function () {
                     const userMessage = document.getElementById("user-message").value;
+                    // サーバーにメッセージを送信する
                     socket.emit("send_message", { message: userMessage });
                     console.log("Send Message sent:", userMessage);
+                    // テキストエリアをクリアする
                     document.getElementById("user-message").value = "";
                 });
         });
